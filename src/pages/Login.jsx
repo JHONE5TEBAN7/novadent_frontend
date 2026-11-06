@@ -30,7 +30,7 @@ export default function Login() {
         <div className="login-brand"><img src={logo} alt="" /><span>nova<span>dent</span></span></div>
         <div className="story-copy">
           <span className="story-kicker"><span /> CUIDAMOS CADA DETALLE</span>
-          <h1>Una sonrisa<br />saludable empieza<br />con <em>una buena agenda.</em></h1>
+          <h1>Una sonrisa<br />saludable empieza<br />con <em>un buen cuidado.</em></h1>
           <p>La gestión de tu clínica, más clara y cerca de ti.</p>
           <div className="story-perks"><span><Check size={15} /> Agenda organizada</span><span><Check size={15} /> Atención coordinada</span></div>
         </div>
