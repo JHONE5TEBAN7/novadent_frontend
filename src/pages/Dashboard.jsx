@@ -11,9 +11,35 @@ const weekday = new Intl.DateTimeFormat('es-CO', { weekday: 'long', day: 'numeri
 
 export default function Dashboard() {
   const [data, setData] = useState({ appointments: [], patients: [], dentists: [] });
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
-    Promise.all([appointmentService.list(), patientService.list(), dentistService.list()]).then(([appointments, patients, dentists]) => setData({ appointments, patients, dentists }));
+    let active = true;
+
+    async function loadDashboard() {
+      try {
+        const [appointments, patients, dentists] = await Promise.all([
+          appointmentService.list(),
+          patientService.list(),
+          dentistService.list(),
+        ]);
+
+        if (![appointments, patients, dentists].every(Array.isArray)) {
+          throw new Error('Las rutas de citas, pacientes y odontólogos deben responder un arreglo JSON.');
+        }
+
+        if (active) setData({ appointments, patients, dentists });
+      } catch (error) {
+        if (active) {
+          setLoadError(error instanceof Error ? error.message : 'Error desconocido al cargar los datos.');
+        }
+      }
+    }
+
+    loadDashboard();
+    return () => {
+      active = false;
+    };
   }, []);
 
   const today = new Date();
@@ -33,6 +59,7 @@ export default function Dashboard() {
   return (
     <>
       <div className="page-heading dashboard-heading"><div><span className="eyebrow">{weekday.format(new Date()).toUpperCase()}</span><h1>Hola, qué bueno verte <span className="wave">✳</span></h1><p>Este es el resumen de tu clínica para hoy.</p></div><Link to="/appointments"><Button icon={CalendarPlus}>Agendar una cita</Button></Link></div>
+      {loadError && <p className="form-alert" role="alert">No se pudo cargar el resumen: {loadError}</p>}
       <section className="metrics-grid" aria-label="Resumen de la clínica">
         {metrics.map(({ label, value, detail, icon: Icon, tone }) => <article className="metric-card surface" key={label}><div className={`metric-icon metric-${tone}`}><Icon size={19} /></div><div className="metric-value">{value}</div><div className="metric-label">{label}</div><div className="metric-detail">{detail}</div><span className="metric-arrow"><ArrowUpRight size={16} /></span></article>)}
       </section>

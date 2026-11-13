@@ -11,6 +11,7 @@ Frontend para la gestión de citas odontológicas, construido con React y Vite.
 
 ```bash
 npm install
+
 npm run dev
 ```
 

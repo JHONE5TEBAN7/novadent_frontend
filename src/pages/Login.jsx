@@ -42,8 +42,8 @@ export default function Login() {
           <div className="mobile-login-brand"><img src={logo} alt="" /><span>nova<span>dent</span></span></div>
           <div className="login-welcome"><span className="eyebrow">BIENVENIDO DE NUEVO</span><h2>Inicia sesión</h2><p>Ingresa tus datos para acceder al panel de tu clínica.</p></div>
           <form className="login-form" onSubmit={handleSubmit} noValidate>
-            <Input id="login-email" label="Correo electrónico" type="email" autoComplete="email" placeholder="nombre@clinica.com" value={email} onChange={(event) => setEmail(event.target.value)} required />
-            <Input id="login-password" label="Contraseña" type="password" autoComplete="current-password" placeholder="Ingresa tu contraseña" value={password} onChange={(event) => setPassword(event.target.value)} required />
+            <Input id="login-email" label="Correo electrónico" type="email" autoComplete="email" placeholder="nombre@clinica.com" onChange={(event) => setEmail(event.target.value)} required />
+            <Input id="login-password" label="Contraseña" type="password" autoComplete="current-password" placeholder="Ingresa tu contraseña" onChange={(event) => setPassword(event.target.value)} required />
             <div className="login-options"><label className="remember-option"><input type="checkbox" defaultChecked /> <span>Recordarme</span></label><button type="button" className="text-button" onClick={() => setNotice('Contacta al administrador de tu clínica para restablecer el acceso.')}>¿Olvidaste tu contraseña?</button></div>
             {error && <p className="form-alert" role="alert">{error}</p>}
             {notice && <p className="form-notice" role="status">{notice}</p>}
