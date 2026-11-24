@@ -8,6 +8,24 @@ import Appointments from './pages/Appointments.jsx';
 import Patients from './pages/Patients.jsx';
 import Dentists from './pages/Dentists.jsx';
 import NotFound from './pages/NotFound.jsx';
+import Profile from './pages/Profile.jsx';
+import Users from './pages/Users.jsx';
+import AccessDenied from './pages/AccessDenied.jsx';
+
+const routeRoles = {
+  '/dashboard': ['ADMINISTRADOR', 'ODONTOLOGO', 'RECEPCIONISTA'],
+  '/appointments': ['ADMINISTRADOR', 'ODONTOLOGO', 'RECEPCIONISTA', 'PACIENTE'],
+  '/patients': ['ADMINISTRADOR', 'ODONTOLOGO', 'RECEPCIONISTA'],
+  '/dentists': ['ADMINISTRADOR', 'PACIENTE'],
+  '/profile': ['PACIENTE'],
+  '/users': ['ADMINISTRADOR'],
+};
+
+function RoleRoute({ allowed, children }) {
+  const { user } = useAuth();
+  if (!allowed.includes(user?.role)) return <AccessDenied />;
+  return children;
+}
 
 function ProtectedLayout() {
   const { user } = useAuth();
@@ -21,11 +39,13 @@ function ProtectedLayout() {
         <Navbar />
         <main className="page-content">
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/appointments" element={<Appointments />} />
-            <Route path="/patients" element={<Patients />} />
-            <Route path="/dentists" element={<Dentists />} />
+            <Route path="/" element={<Navigate to={user.role === 'PACIENTE' ? '/appointments' : '/dashboard'} replace />} />
+            <Route path="/dashboard" element={<RoleRoute allowed={routeRoles['/dashboard']}><Dashboard /></RoleRoute>} />
+            <Route path="/appointments" element={<RoleRoute allowed={routeRoles['/appointments']}><Appointments /></RoleRoute>} />
+            <Route path="/patients" element={<RoleRoute allowed={routeRoles['/patients']}><Patients /></RoleRoute>} />
+            <Route path="/dentists" element={<RoleRoute allowed={routeRoles['/dentists']}><Dentists /></RoleRoute>} />
+            <Route path="/profile" element={<RoleRoute allowed={routeRoles['/profile']}><Profile /></RoleRoute>} />
+            <Route path="/users" element={<RoleRoute allowed={routeRoles['/users']}><Users /></RoleRoute>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>
@@ -39,7 +59,7 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/login" element={user ? <Navigate to="/dashboard" replace /> : <Login />} />
+      <Route path="/login" element={user ? <Navigate to={user.role === 'PACIENTE' ? '/appointments' : '/dashboard'} replace /> : <Login />} />
       <Route path="/*" element={<ProtectedLayout />} />
     </Routes>
   );

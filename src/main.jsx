@@ -6,6 +6,8 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import './styles/variables.css';
 import './styles/global.css';
 import './styles/components.css';
+import 'react-calendar/dist/Calendar.css';
+import 'react-phone-number-input/style.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>

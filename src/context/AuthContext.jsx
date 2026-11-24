@@ -9,6 +9,7 @@ export function AuthProvider({ children }) {
   async function login(credentials) {
     const nextUser = await loginService(credentials);
     setUser(nextUser);
+    return nextUser;
   }
 
   function logout() {
@@ -16,7 +17,7 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
-  return <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{ user, setUser, login, logout }}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

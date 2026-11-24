@@ -163,6 +163,24 @@
 .text-button { padding: 0; border: 0; background: none; color: var(--blue); font-size: 11px; font-weight: 700; }
 .login-submit { width: 100%; min-height: 47px; margin-top: 3px; }
 .login-legal { margin-top: 28px; padding-top: 18px; border-top: 1px solid #edf1f3; color: #9aa8af; font-size: 10px; text-align: center; }
+.auth-tabs { display: grid; grid-template-columns: 1fr 1fr; margin: -12px 0 18px; border-bottom: 1px solid var(--line); }
+.auth-tabs button { min-height: 42px; border: 0; border-bottom: 2px solid transparent; background: transparent; color: var(--muted); font-size: 12px; font-weight: 700; }
+.auth-tabs button.active { border-bottom-color: var(--blue); color: var(--blue); }
+.register-form { display: grid; gap: 12px; }
+.register-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.PhoneInput { display: flex; min-height: 43px; align-items: center; border: 1px solid #dfe8ed; border-radius: 8px; background: #fff; }
+.PhoneInput:focus-within { border-color: #79b8d2; box-shadow: 0 0 0 3px #e9f5f9; }
+.PhoneInputCountry { margin-left: 10px; }
+.PhoneInputInput { min-width: 0; flex: 1; min-height: 41px; border: 0; outline: 0; padding: 0 10px; color: var(--ink); background: transparent; }
+.profile-panel { max-width: 620px; }
+.appointment-calendar-field { display: grid; gap: 7px; }
+.appointment-calendar { overflow: hidden; border: 1px solid #dfe8ed; border-radius: 10px; }
+.react-calendar { width: 100%; border: 0; font-family: 'DM Sans', sans-serif; }
+.react-calendar__tile { height: 42px; color: #405562; }
+.react-calendar__tile--active, .react-calendar__tile--active:enabled:hover { border-radius: 8px; background: var(--blue); color: #fff; }
+.react-calendar__tile:disabled { background: #f2f5f6; color: #bcc7cc; }
+.calendar-busy { background: #fff0ec; color: #b95f50; }
+.calendar-available { background: #f6fbf9; }
 
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
 @keyframes rise-in { from { transform: translateY(8px); opacity: .7; } to { transform: translateY(0); opacity: 1; } }
@@ -217,6 +235,7 @@
 }
 
 @media (max-width: 430px) {
+  .register-grid { grid-template-columns: 1fr; }
   .page-content { padding-right: 13px; padding-left: 13px; }
   .metrics-grid { gap: 8px; }
   .metric-card { min-height: 136px; padding: 12px; }

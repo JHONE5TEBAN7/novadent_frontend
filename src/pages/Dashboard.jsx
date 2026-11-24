@@ -6,10 +6,12 @@ import Button from '../components/Button.jsx';
 import { appointmentService } from '../services/appointmentService.js';
 import { patientService } from '../services/patientService.js';
 import { dentistService } from '../services/dentistService.js';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const weekday = new Intl.DateTimeFormat('es-CO', { weekday: 'long', day: 'numeric', month: 'long' });
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [data, setData] = useState({ appointments: [], patients: [], dentists: [] });
   const [loadError, setLoadError] = useState('');
 
@@ -43,14 +45,20 @@ export default function Dashboard() {
   }, []);
 
   const today = new Date();
-  const upcoming = data.appointments.filter((item) => new Date(item.date) >= new Date(today.setHours(0, 0, 0, 0)) && item.status !== 'Cancelada').sort((a, b) => new Date(a.date) - new Date(b.date));
-  const pending = data.appointments.filter((item) => item.status === 'Pendiente').length;
-  const appointmentCount = data.appointments.length;
+  const scopedAppointments = user?.role === 'ODONTOLOGO'
+    ? data.appointments.filter((item) => item.dentistId === user.dentistId)
+    : data.appointments;
+  const scopedPatients = user?.role === 'ODONTOLOGO'
+    ? data.patients.filter((item) => user.patientIds?.includes(item.id))
+    : data.patients;
+  const upcoming = scopedAppointments.filter((item) => new Date(item.date) >= new Date(today.setHours(0, 0, 0, 0)) && item.status !== 'Cancelada').sort((a, b) => new Date(a.date) - new Date(b.date));
+  const pending = scopedAppointments.filter((item) => item.status === 'Pendiente').length;
+  const appointmentCount = scopedAppointments.length;
   const byId = (items) => Object.fromEntries(items.map((item) => [item.id, item.name]));
   const patientNames = byId(data.patients);
   const dentistNames = byId(data.dentists);
   const metrics = [
-    { label: 'Total de pacientes', value: data.patients.length, detail: 'Pacientes registrados', icon: UsersRound, tone: 'sky' },
+    { label: 'Total de pacientes', value: scopedPatients.length, detail: 'Pacientes registrados', icon: UsersRound, tone: 'sky' },
     { label: 'Odontólogos', value: data.dentists.length, detail: 'Equipo clínico activo', icon: UserRound, tone: 'mint' },
     { label: 'Citas programadas', value: appointmentCount, detail: 'En toda la agenda', icon: CalendarCheck2, tone: 'blue' },
     { label: 'Citas pendientes', value: pending, detail: 'Requieren confirmación', icon: Clock3, tone: 'peach' },
@@ -69,7 +77,7 @@ export default function Dashboard() {
         </div>
         <aside className="dashboard-aside">
           <div className="welcome-card"><div className="welcome-icon"><Sparkles size={18} /></div><span className="eyebrow">TU CLÍNICA, EN ORDEN</span><h2>Un día a la vez,<br />una sonrisa a la vez.</h2><p>La agenda está lista para ayudarte a coordinar cada atención.</p><div className="welcome-foot"><span><i /> Sistema operativo</span><span>NovaDent</span></div></div>
-          <div className="quick-card surface"><h3 className="section-title">Accesos rápidos</h3><Link to="/patients"><UsersRound size={17} /><span>Registrar paciente</span><ArrowUpRight size={15} /></Link><Link to="/dentists"><UserRound size={17} /><span>Ver equipo clínico</span><ArrowUpRight size={15} /></Link></div>
+          <div className="quick-card surface"><h3 className="section-title">Accesos rápidos</h3>{['ADMINISTRADOR','RECEPCIONISTA'].includes(user?.role) && <Link to="/patients"><UsersRound size={17} /><span>Registrar paciente</span><ArrowUpRight size={15} /></Link>}<Link to="/appointments"><CalendarCheck2 size={17} /><span>Ver agenda</span><ArrowUpRight size={15} /></Link>{user?.role === 'ADMINISTRADOR' && <Link to="/dentists"><UserRound size={17} /><span>Ver equipo clínico</span><ArrowUpRight size={15} /></Link>}</div>
         </aside>
       </section>
     </>
